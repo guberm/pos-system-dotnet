@@ -1,0 +1,29 @@
+@POSSystem_HostAddress = http://localhost:5122
+
+# Get all products
+GET {{POSSystem_HostAddress}}/api/products
+Accept: application/json
+
+###
+
+# Get all orders
+GET {{POSSystem_HostAddress}}/api/orders
+Accept: application/json
+
+###
+
+# Create a new order
+POST {{POSSystem_HostAddress}}/api/orders
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+###

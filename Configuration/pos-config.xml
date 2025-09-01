@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<POSConfiguration>
+  <GeneralSettings>
+    <TaxRate>0.08</TaxRate>
+    <Currency>USD</Currency>
+    <CompanyName>Modern POS System</CompanyName>
+    <CompanyAddress>123 Business St, City, State 12345</CompanyAddress>
+    <CompanyPhone>(555) 123-4567</CompanyPhone>
+    <CompanyEmail>info@modernpos.com</CompanyEmail>
+  </GeneralSettings>
+  
+  <PaymentSettings>
+    <AcceptedMethods>
+      <Method id="1" name="Cash" enabled="true" />
+      <Method id="2" name="CreditCard" enabled="true" />
+      <Method id="3" name="DebitCard" enabled="true" />
+      <Method id="4" name="DigitalWallet" enabled="true" />
+      <Method id="5" name="Check" enabled="false" />
+    </AcceptedMethods>
+    <CreditCardProcessing>
+      <Provider>Stripe</Provider>
+      <ApiEndpoint>https://api.stripe.com/v1</ApiEndpoint>
+      <Timeout>30</Timeout>
+    </CreditCardProcessing>
+  </PaymentSettings>
+  
+  <SecuritySettings>
+    <SessionTimeout>30</SessionTimeout>
+    <MaxLoginAttempts>3</MaxLoginAttempts>
+    <PasswordPolicy>
+      <MinLength>8</MinLength>
+      <RequireUppercase>true</RequireUppercase>
+      <RequireLowercase>true</RequireLowercase>
+      <RequireNumbers>true</RequireNumbers>
+      <RequireSpecialChars>true</RequireSpecialChars>
+    </PasswordPolicy>
+  </SecuritySettings>
+  
+  <ReportingSettings>
+    <DailyReportTime>23:59</DailyReportTime>
+    <EmailReports>true</EmailReports>
+    <ReportRecipients>
+      <Recipient>manager@modernpos.com</Recipient>
+      <Recipient>owner@modernpos.com</Recipient>
+    </ReportRecipients>
+  </ReportingSettings>
+  
+  <InventorySettings>
+    <LowStockThreshold>10</LowStockThreshold>
+    <AutoReorderEnabled>false</AutoReorderEnabled>
+    <ReorderQuantity>50</ReorderQuantity>
+  </InventorySettings>
+</POSConfiguration>

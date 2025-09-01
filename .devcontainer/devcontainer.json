@@ -1,0 +1,90 @@
+{
+    "name": "POS System DevContainer",
+    "dockerComposeFile": "../docker-compose.dev.yml",
+    "service": "pos-api",
+    "workspaceFolder": "/app",
+    
+    "features": {
+        "ghcr.io/devcontainers/features/dotnet:2": {
+            "version": "9.0",
+            "installUsingApt": false
+        },
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "moby": true,
+            "azureDnsAutoDetection": true,
+            "installDockerBuildx": true,
+            "version": "latest",
+            "dockerDashComposeVersion": "v2"
+        },
+        "ghcr.io/devcontainers/features/git:1": {
+            "ppa": true,
+            "version": "latest"
+        }
+    },
+
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+                "dotnet.codeLens.enableReferencesCodeLens": true,
+                "dotnet.unitTests.runSettingsPath": "",
+                "omnisharp.enableEditorConfigSupport": true,
+                "omnisharp.enableRoslynAnalyzers": true,
+                "files.exclude": {
+                    "**/bin": true,
+                    "**/obj": true
+                },
+                "search.exclude": {
+                    "**/bin": true,
+                    "**/obj": true,
+                    "**/node_modules": true
+                }
+            },
+            "extensions": [
+                "ms-dotnettools.csharp",
+                "ms-dotnettools.dotnet-interactive-vscode",
+                "ms-vscode.vscode-json",
+                "bradlc.vscode-tailwindcss",
+                "humao.rest-client",
+                "ms-azuretools.vscode-docker",
+                "GitHub.copilot",
+                "GitHub.copilot-chat",
+                "ms-vscode.test-adapter-converter",
+                "formulahendry.dotnet-test-explorer",
+                "jmrog.vscode-nuget-package-manager",
+                "kreativ-software.csharpextensions",
+                "ms-dotnettools.vscode-dotnet-runtime",
+                "ms-vscode.powershell"
+            ]
+        }
+    },
+
+    "forwardPorts": [5122, 1433, 80, 443],
+    "portsAttributes": {
+        "5122": {
+            "label": "POS API",
+            "onAutoForward": "notify"
+        },
+        "1433": {
+            "label": "SQL Server",
+            "onAutoForward": "silent"
+        }
+    },
+
+    "postCreateCommand": "bash .devcontainer/post-create.sh",
+    "postStartCommand": "dotnet restore",
+    "postAttachCommand": {
+        "server": "dotnet watch run --project POSSystem.csproj --urls http://0.0.0.0:5122"
+    },
+
+    "mounts": [
+        "source=${localWorkspaceFolder}/.nuget,target=/home/vscode/.nuget,type=bind,consistency=cached"
+    ],
+
+    "remoteUser": "vscode",
+    "containerUser": "vscode",
+    
+    "initializeCommand": ".devcontainer/initialize.sh"
+}

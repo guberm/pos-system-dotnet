@@ -1,0 +1,30 @@
+# Build stage for migrator
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+
+# Copy migrator project file and restore
+COPY POSSystem.Migrator/POSSystem.Migrator.csproj ./POSSystem.Migrator/
+RUN dotnet restore ./POSSystem.Migrator/POSSystem.Migrator.csproj
+
+# Copy source and build
+COPY POSSystem.Migrator/ ./POSSystem.Migrator/
+RUN dotnet build ./POSSystem.Migrator/POSSystem.Migrator.csproj -c Release -o /app/build
+
+# Publish stage
+FROM build AS publish
+RUN dotnet publish ./POSSystem.Migrator/POSSystem.Migrator.csproj -c Release -o /app/publish
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/runtime:9.0 AS final
+WORKDIR /app
+
+# Create non-root user
+RUN groupadd -r migrator && useradd -r -g migrator migrator
+RUN chown -R migrator:migrator /app
+USER migrator
+
+# Copy published application
+COPY --from=publish /app/publish .
+
+# Entry point with connection string from environment
+ENTRYPOINT ["sh", "-c", "dotnet POSSystem.Migrator.dll \"$ConnectionString\""]
