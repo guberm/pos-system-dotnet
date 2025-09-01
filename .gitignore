@@ -130,5 +130,8 @@ typings/
 # Exclude copilot instructions from repository
 .github/copilot-instructions.md
 
+# Exclude GitHub workflows (token doesn't have workflow scope)
+.github/workflows/
+
 # Exclude all batch files (may contain tokens/credentials)
 *.bat
