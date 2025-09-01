@@ -1,0 +1,69 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  DOTNET_VERSION: '9.0.x'
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore "Tlg Code.sln"
+      
+    - name: Build solution
+      run: dotnet build "Tlg Code.sln" --no-restore --configuration Release
+      
+    - name: Run tests
+      run: |
+        if [ -f "POSSystem.Tests/POSSystem.Tests.csproj" ]; then
+          dotnet test "POSSystem.Tests/POSSystem.Tests.csproj" --no-build --configuration Release --logger trx --results-directory "TestResults"
+        else
+          echo "WARNING: No test project found, skipping tests"
+        fi
+        
+    - name: Publish test results
+      uses: dorny/test-reporter@v1
+      if: success() || failure()
+      with:
+        name: Test Results
+        path: TestResults/*.trx
+        reporter: dotnet-trx
+        
+    - name: Build migrator
+      run: dotnet build POSSystem.Migrator/POSSystem.Migrator.csproj --configuration Release
+
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore "Tlg Code.sln"
+      
+    - name: Run static analysis
+      run: dotnet format "Tlg Code.sln" --verify-no-changes --verbosity diagnostic
+      continue-on-error: true
